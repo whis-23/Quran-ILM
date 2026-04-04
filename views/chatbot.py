@@ -224,9 +224,9 @@ st.markdown("""
         transition: border-color 0.2s, color 0.2s, background 0.2s !important;
     }
     div[data-testid="stAudioInput"] button:hover {
-        color: #D4AF37 !important;
-        border-color: #D4AF37 !important;
-        background-color: rgba(212,175,55,0.07) !important;
+        color: #8B6BB1 !important;
+        border-color: #8B6BB1 !important;
+        background-color: rgba(139,107,177,0.07) !important;
     }
 
     /* ── Chat input: push placeholder text right to clear the Mic & Native Attachment icons ── */

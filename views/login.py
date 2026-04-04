@@ -93,7 +93,7 @@ def login_page():
         
         /* Links */
         .auth-link {
-            color: #D4AF37;
+            color: #8B6BB1;
             text-decoration: none;
             cursor: pointer;
             font-size: 0.9rem;

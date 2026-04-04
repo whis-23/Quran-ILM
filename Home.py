@@ -14,9 +14,9 @@ if "role" not in st.session_state:
 # --- BUTTON STYLES ---
 st.markdown("""
 <style>
-    /* Global Button Style (Gold Theme) */
+    /* Global Button Style (Purple Theme) */
     div.stButton > button, div.stFormSubmitButton > button, div.stDownloadButton > button {
-        background-color: #D4AF37 !important; 
+        background-color: #8B6BB1 !important; 
         color: white !important;
         border-radius: 8px !important;
         padding: 0.5rem 1rem !important;
@@ -31,7 +31,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
     div.stButton > button:hover, div.stFormSubmitButton > button:hover, div.stDownloadButton > button:hover {
-        background-color: #B5952F !important;
+        background-color: #7558A0 !important;
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
@@ -39,7 +39,7 @@ st.markdown("""
     /* Tertiary Button (Link Style) */
     div.stButton > button[kind="tertiary"] {
         background-color: transparent !important;
-        color: #D4AF37 !important;
+        color: #8B6BB1 !important;
         border: none !important;
         box-shadow: none !important;
         text-decoration: none !important;
@@ -48,7 +48,7 @@ st.markdown("""
         margin-top: 10px !important;
     }
     div.stButton > button[kind="tertiary"] p {
-        color: #D4AF37 !important;
+        color: #8B6BB1 !important;
         text-decoration: underline;
         font-weight: normal !important;
     }
