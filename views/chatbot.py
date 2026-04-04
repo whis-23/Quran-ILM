@@ -329,8 +329,10 @@ with st.sidebar:
 
     if IS_GUEST:
         # Guest: minimal sidebar — just sign in/up options
+        st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
         st.image("quran_ilm.png", width=180)
-        st.markdown("<p style='color:#6b7280; font-size:0.85rem;'>Ask questions about the Quran and Tafsir.</p>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#6b7280; font-size:0.85rem; text-align:center;'>Ask questions about the Quran and Tafsir.</p>", unsafe_allow_html=True)
         st.write("---")
         if st.button("🚀 Sign Up Free", type="primary", use_container_width=True, key="sidebar_signup"):
             st.session_state.auth_mode = "signup"
@@ -340,10 +342,8 @@ with st.sidebar:
             st.session_state.auth_mode = "login"
             st.session_state.show_login_page = True
             st.rerun()
-        # Show remaining questions counter
+        # Track remaining questions silently (used to trigger signup nudge)
         remaining = max(0, GUEST_QUESTION_LIMIT - st.session_state.guest_question_count)
-        st.write("---")
-        st.caption(f"� {remaining} free question{'s' if remaining != 1 else ''} remaining")
     else:
         # Authenticated: full chat history sidebar
         st.title("💬 Chats")
