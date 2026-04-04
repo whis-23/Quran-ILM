@@ -824,8 +824,9 @@ if prompt:
             except:
                 pass
     
-    # --- SHOW SAVE NUDGE AFTER 3rd QUESTION (once only) ---
-    if IS_GUEST and st.session_state.guest_question_count == GUEST_QUESTION_LIMIT:
+    # --- SHOW SAVE NUDGE AFTER 3rd QUESTION (once per session) ---
+    if IS_GUEST and st.session_state.guest_question_count >= GUEST_QUESTION_LIMIT and not st.session_state.get("signup_prompt_shown", False):
+        st.session_state.signup_prompt_shown = True
         show_signup_prompt()
     
     # Rerun to cleanly transition the streamed message into the standard history loop
