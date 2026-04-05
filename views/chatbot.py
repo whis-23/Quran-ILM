@@ -91,6 +91,9 @@ if "guest_question_count" not in st.session_state:
     st.session_state.guest_question_count = 0
 if "show_signup_prompt" not in st.session_state:
     st.session_state.show_signup_prompt = False
+# Track auth state across reruns to detect guest→login transition
+if "_was_guest" not in st.session_state:
+    st.session_state._was_guest = True
 
 def create_new_chat():
     """Starts a new chat session."""
@@ -288,6 +291,14 @@ def extract_file_content(uploaded_file):
 # --- AUTH / GUEST CHECK ---
 IS_GUEST = not st.session_state.get("authenticated", False)
 
+# --- FIX: Clear guest messages when user logs in ---
+if st.session_state._was_guest and not IS_GUEST:
+    # User just transitioned from guest → authenticated: wipe the guest chat
+    st.session_state.messages = []
+    st.session_state.current_chat_id = None
+    st.session_state.guest_question_count = 0
+st.session_state._was_guest = IS_GUEST  # Update tracker for next rerun
+
 # --- SAVE NUDGE DIALOG (ChatGPT-style) ---
 @st.dialog("💾 Save Your Conversations")
 def show_signup_prompt():
@@ -357,7 +368,11 @@ with st.sidebar:
         st.write("---")
         is_temp = st.toggle("🕵️ Temp Chat (No Save)", value=st.session_state.temp_mode)
         if is_temp != st.session_state.temp_mode:
+            # Toggling temp mode (either direction) always starts a fresh chat
             st.session_state.temp_mode = is_temp
+            st.session_state.messages = []
+            st.session_state.current_chat_id = None
+            st.rerun()
         
         # Search & Sort
         st.write("---")

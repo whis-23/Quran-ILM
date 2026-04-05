@@ -282,10 +282,13 @@ def reset_password_confirm(email, otp, new_password):
 try:
     from descope import DescopeClient
     from descope.common import DeliveryMethod
+    if not config.DESCOPE_PROJECT_ID:
+        raise ValueError("DESCOPE_PROJECT_ID is not set in .env")
     descope_client = DescopeClient(project_id=config.DESCOPE_PROJECT_ID)
-except Exception:
+    print(f"[AUTH] Descope initialized OK (project: {config.DESCOPE_PROJECT_ID[:8]}...)")
+except Exception as e:
     descope_client = None
-    print("[AUTH] Descope SDK not found or config error")
+    print(f"[AUTH] Descope init failed: {e}")
 
 def send_magic_link(email, redirect_url=None, intent="login"):
     """
