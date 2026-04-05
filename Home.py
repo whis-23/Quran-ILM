@@ -91,6 +91,10 @@ else:
             st.session_state.guest_question_count = 0
             st.session_state.show_login_page = False
             st.session_state.auth_mode = "login"
+            # Clear chat data on logout
+            st.session_state.messages = []
+            st.session_state.current_chat_id = None
+            st.session_state._was_guest = True
             st.rerun()
             
     if st.session_state.role == "admin":

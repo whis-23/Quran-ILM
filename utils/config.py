@@ -18,14 +18,16 @@ def get_env(key, default=None, secret_path=None):
         return value
 
     # 2. Streamlit Secrets
-    if secret_path:
-        try:
+    try:
+        if secret_path:
             val = st.secrets
             for k in secret_path:
                 val = val[k]
             return val
-        except (KeyError, FileNotFoundError, AttributeError, TypeError):
-            pass
+        else:
+            return st.secrets[key]
+    except (KeyError, FileNotFoundError, AttributeError, TypeError):
+        pass
 
     return default
 
