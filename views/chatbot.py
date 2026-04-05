@@ -42,7 +42,7 @@ def init_resources():
             return db_val
         return config.get_env(key, default)
 
-    google_api_key = get_conf("GOOGLE_API_KEY", "")
+    google_api_key = config.get_env("GOOGLE_API_KEY", "")  # Always from env — paid key must not be overridden by DB
     llm_model_name = get_conf("LLM_MODEL", "gemini-2.5-flash")
     embedding_model_name = get_conf("EMBEDDING_MODEL", "gemini-embedding-001")
     top_k = int(get_conf("TOP_K", 5))
@@ -824,10 +824,14 @@ if prompt:
             except:
                 pass
     
-    # --- SHOW SAVE NUDGE AFTER 3rd QUESTION (once per session) ---
-    if IS_GUEST and st.session_state.guest_question_count >= GUEST_QUESTION_LIMIT and not st.session_state.get("signup_prompt_shown", False):
-        st.session_state.signup_prompt_shown = True
-        show_signup_prompt()
+    # --- SHOW SAVE NUDGE AFTER 3rd QUESTION (set flag, show BEFORE rerun) ---
+    if IS_GUEST and st.session_state.guest_question_count >= GUEST_QUESTION_LIMIT:
+        st.session_state.show_signup_prompt = True
     
     # Rerun to cleanly transition the streamed message into the standard history loop
     st.rerun()
+
+# --- SHOW SIGNUP NUDGE (runs every page load, persists across reruns) ---
+if IS_GUEST and st.session_state.get("show_signup_prompt", False):
+    st.session_state.show_signup_prompt = False  # Reset so it only shows once
+    show_signup_prompt()
