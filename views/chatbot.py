@@ -96,10 +96,10 @@ if "_was_guest" not in st.session_state:
     st.session_state._was_guest = True
 
 def create_new_chat():
-    """Starts a new chat session."""
+    """Starts a new chat session. Preserves any current temp_mode setting."""
     st.session_state.current_chat_id = str(uuid.uuid4())
     st.session_state.messages = []
-    st.session_state.temp_mode = False 
+    # NOTE: deliberately NOT resetting temp_mode here — let the caller control it
 
 def load_chat(chat_id):
     """Loads a chat from DB."""
@@ -361,6 +361,7 @@ with st.sidebar:
         
         # New Chat Button
         if st.button("➕ New Chat", use_container_width=True, type="primary"):
+            st.session_state.temp_mode = False  # Always exit temp mode on new chat
             create_new_chat()
             st.rerun()
         
@@ -368,10 +369,11 @@ with st.sidebar:
         st.write("---")
         is_temp = st.toggle("🕵️ Temp Chat (No Save)", value=st.session_state.temp_mode)
         if is_temp != st.session_state.temp_mode:
-            # Toggling temp mode (either direction) always starts a fresh chat
+            # Toggling either direction: set mode, clear messages, assign fresh chat ID
+            # (do NOT set current_chat_id=None — that fires create_new_chat which used to reset temp_mode)
             st.session_state.temp_mode = is_temp
             st.session_state.messages = []
-            st.session_state.current_chat_id = None
+            st.session_state.current_chat_id = str(uuid.uuid4())
             st.rerun()
         
         # Search & Sort
