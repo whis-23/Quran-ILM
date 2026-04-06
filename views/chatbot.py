@@ -302,7 +302,9 @@ st.session_state._was_guest = IS_GUEST  # Update tracker for next rerun
 # --- SAVE NUDGE DIALOG (ChatGPT-style) ---
 @st.dialog("💾 Save Your Conversations")
 def show_signup_prompt():
-    st.image("quran_ilm.png", width=100)
+    c1, c2, c3 = st.columns([1, 1, 1])
+    with c2:
+        st.image("quran_ilm.png", use_container_width=True)
     st.markdown("""
     <div style="text-align:center; padding: 10px 0;">
         <h3 style="margin:0; color:#1f2937;">Don't lose your insights</h3>
