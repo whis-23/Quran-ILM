@@ -86,7 +86,7 @@ else:
     
     # Logout Logic in Sidebar
     with st.sidebar:
-        st.logo("quran_ilm.png")
+        # st.logo("quran_ilm.png")
         st.write(f"Logged in as **{st.session_state.role.upper()}**")
         
         if st.button("🚪 Log Out"):

@@ -338,13 +338,14 @@ def show_signup_prompt():
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.logo("quran_ilm.png") # Adds a global logo to the top left above navigation 
+    # st.logo("quran_ilm.png")  # Removed mini logo
 
     if IS_GUEST:
         # Guest: minimal sidebar — just sign in/up options
-        st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
-        st.image("quran_ilm.png", width=180)
-        st.markdown("</div>", unsafe_allow_html=True)
+        c1, c2, c3 = st.columns([0.3, 1, 0.3])
+        with c2:
+            st.image("quran_ilm.png", use_container_width=True)
+        st.write("")
         st.markdown("<p style='color:#6b7280; font-size:0.85rem; text-align:center;'>Ask questions about the Quran and Tafsir.</p>", unsafe_allow_html=True)
         st.write("---")
         if st.button("🚀 Sign Up Free", type="primary", use_container_width=True, key="sidebar_signup"):
