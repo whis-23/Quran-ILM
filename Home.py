@@ -64,6 +64,11 @@ if not st.session_state.authenticated:
     if "show_login_page" not in st.session_state:
         st.session_state.show_login_page = False
 
+    # Force login page to process magic link if token is in URL
+    if "t" in st.query_params:
+        st.session_state.show_login_page = True
+        st.session_state.auth_mode = "login"
+
     if st.session_state.show_login_page:
         # --- LOGIN PAGE ---
         pg = st.navigation([st.Page("views/login.py", title="Login", icon="🔐")])
