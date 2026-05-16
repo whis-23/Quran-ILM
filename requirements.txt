@@ -18,3 +18,9 @@ pypdf
 descope
 python-docx
 gTTS
+# --- Personalized Recitation module ---
+TTS>=0.22.0
+torch
+pydub
+soundfile
+Pillow

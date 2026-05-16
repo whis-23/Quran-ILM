@@ -124,8 +124,9 @@ else:
         user_pages = [
             st.Page("views/chatbot.py", title="Chatbot", icon="🤖", default=True),
             st.Page("views/user_feedback.py", title="Feedback", icon="✍️"),
+            st.Page("views/quran_recitation.py", title="Recitation", icon="🕌"),
         ]
-        
+
         pg = st.navigation(
             {
                 "Application": user_pages,
