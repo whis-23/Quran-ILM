@@ -1,34 +1,135 @@
-# General
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.DS_Store
-Thumbs.db
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Environment Variables & Secrets
-.env
-.streamlit/secrets.toml
-
-# Virtual Environments
+# Virtual environments
 venv/
-.venv/
 env/
-.env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
 
-# IDEs
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# Streamlit
-# Keep .streamlit/config.toml if it contains theme settings, but ignore secrets
-# .streamlit/config.toml 
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Project Specific
-# Ignore generated datasets or RAG indices if stored locally (GridFS handles this, but just in case)
-dataset/ 
+# AI Models and Cache
+*.pth
+*.pt
+*.ckpt
+*.h5
+*.onnx
+*.tflite
+.cache/
+models/
+checkpoints/
+pretrained_models/
+
+# TTS specific
+tts_cache/
+tts_models/
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.aac
+*.ogg
+temp_audio/
+cloned_output/
+output/
+audio_samples/
+
+# PDF processing
+temp_pdfs/
+converted_images/
+
+*.jpg
+*.jpeg
 
 # Logs
 *.log
+logs/
+tensorboard_logs/
 
-QURAN_ILM_REACT
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Streamlit
+.streamlit/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Large files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Documentation build
+docs/_build/
+site/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+linkedin_post.txt
+medium_blog_post.txt

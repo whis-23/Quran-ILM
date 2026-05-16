@@ -1,101 +1,73 @@
-# 📖 Quran-ILM (Intelligent Learning Module)
+# Personalized Quran Reciter
 
-**Quran-ILM** is an advanced AI-powered RAG (Retrieval-Augmented Generation) application designed to provide accurate, context-aware answers to Islamic and Quranic queries. Built with **Streamlit**, **MongoDB Atlas**, and **Google Gemini**, it combines modern vector search with generative AI to facilitate religious research and learning.
+A web application built with Streamlit for voice cloning your own recitation of the Holy Quran. 
+Leveraging Text-to-Speech (TTS) with XTTS v2, the app allows you to browse surahs, select ayahs, provide a short voice sample, and generate high-quality personalized recitations of the selected verses.
 
----
+## Features
 
-## 🚀 Features
+- 📖 **Quran Explorer**: Navigate through all 114 Surahs and select specific Ayahs.
+- 🎤 **Voice Cloning**: Provide a short sample of your voice (WAV, MP3, M4A, FLAC, OGG) to generate customized recitations using the XTTS v2 model.
+- 💾 **Session History & DB**: The app saves your past generated recitations using an SQLite database so you can browse, playback, or download them at any time.
+- 🎵 **Audio Playback**: Listen to your generated Quran recitation directly in the browser.
+- 📥 **Download**: Download your personalized audio files seamlessly.
 
-### 🤖 AI Chatbot
--   **RAG-Powered**: Retrieves context from verified sources (Tafsir, Hadith, Quran translations) before answering.
--   **Source Citations**: Displays the specific Reference Texts used to generate the answer for transparency.
--   **Contextual History**: Remembers previous turns in the conversation.
--   **Token Usage Tracking**: Monitors cost and efficiency per query.
+## Installation
 
-### 🛡️ Secure Authentication
--   **Role-Based Access Control (RBAC)**: Distinct views for **Users** (Chatbot) and **Admins** (Dashboard).
--   **Security**: SHA-256 (salted) password hashing, OTP-based verification (Sign Up, Forgot Password), and Admin 2FA.
--   **Session Management**: Secure session handling with auto-logout.
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### 🛠️ Admin Dashboard
--   **File Manager**: Upload PDF/TXT files directly to **GridFS** and sync with the RAG knowledge base.
--   **RAG Configuration**: Dynamically adjust LLM parameters (`Top-K`, `Temperature`, `Chunk Size`) and API keys without restarting the server.
--   **Analytics**: Visualize Token Usage, User Traffic, and Database states.
--   **Feedback Review**: Monitor user feedback (Thumbs Up/Down + Comments) to improve response quality.
+2. **System Requirements**:
+   - Python 3.8+
+   - For audio conversion `ffmpeg` and `libsndfile1` might be necessary depending on your environment. Since this runs via Streamlit and involves heavy TTS, a GPU is recommended.
 
----
+## Running the App
 
-## 💻 Tech Stack
+1. **Start the Streamlit app**:
+   ```bash
+   streamlit run quran_app.py
+   ```
 
--   **Frontend**: Streamlit (Python)
--   **Database**: MongoDB Atlas (Metadata, Chat History, Logs) & MongoDB Vector Search.
--   **Storage**: MongoDB GridFS (Raw PDF/Text storage).
--   **AI Model**: Google Gemini 1.5 Flash (via `google-generativeai`).
--   **Embeddings**: `gemini-embedding-001` (768 dimensions).
--   **Email**: SMTP (Gmail) for OTPs and Notifications.
+2. **Access in the Browser**: Navigate to the URL shown in the terminal (usually `http://localhost:8501`).
 
----
+## How to Use
 
-## ⚙️ Installation & Setup
+### 1. Browse the Quran
+- On the left sidebar, select a **Surah** from the dropdown menu.
+- Specify the starting and ending **Ayahs** you want to synthesize. The Arabic text will be fetched from `data/quran-simple.txt`.
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/whis-19/Quran-ILM.git
-cd Quran-ILM
+### 2. Upload Your Voice Sample
+- Upload a clear **10-30 seconds** voice recording without background noise.
+- The app supports `.wav`, `.mp3`, `.m4a`, and other audio formats, converting them automatically to `.wav`.
+
+### 3. Generate Recitation
+- Click the **"🎙️ Generate Recitation"** button.
+- Wait for the model (XTTS v2) to process and synthesize the audio. The first time the model runs, it may need to download the weights.
+
+### 4. History and Playback
+- Check the **"📚 Recent Recordings"** in the sidebar to view, playback, or delete past generations.
+- A direct playback and download button will be provided upon successful synthesis in the main panel.
+
+## Troubleshooting
+
+- **"Quran data not loaded"**: The file `data/quran-simple.txt` must be present.
+- **Model downloading takes too long**: Initial downloads of the XTTS v2 model can be quite large. Ensure stable internet.
+- **Slow Generation**: For faster processing, running on a machine with a CUDA-supported GPU is highly recommended. Set `CUDA_VISIBLE_DEVICES` correctly if running into issues.
+
+## Project Structure
+
+```
+├── quran_app.py           # Main Streamlit application UI
+├── quran_manager.py       # Handles reading and retrieving Quran verses
+├── voice_cloner.py        # Wrapper around XTTS v2 for Arabic voice cloning
+├── database.py            # SQLite operations for recording history
+├── requirements.txt       # Python dependencies
+├── packages.txt           # System-level dependencies
+├── data/quran-simple.txt  # Arabic text of the Quran
+└── recordings/            # Output folder for generated audio files
 ```
 
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+## License
 
-### 3. Configure Environment
-Create a `.env` file in the root directory (or use Streamlit Secrets). Copy the structure below:
-
-```ini
-# --- Database ---
-MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/
-MONGO_DB_NAME=Quran_Metadata
-MONGO_RAG_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/
-MONGO_RAG_DB_NAME=Quran_RAG_Vectors
-
-# --- AI ---
-GOOGLE_API_KEY=your_google_gemini_api_key
-
-# --- Email (SMTP) ---
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-SMTP_EMAIL=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
-```
-
-### 4. Run the Application
-```bash
-streamlit run Home.py
-```
-
----
-
-## 📂 Project Structure
-
--   **`Home.py`**: Main entry point & Router.
--   **`config.py`**: Centralized configuration and environment loader.
--   **`views/`**: UI Pages (Login, Chatbot, Admin Panels).
--   **`auth_utils.py`**: Authentication logic (Hash, OTP, Email).
--   **`rag_ingestion.py`**: Pipeline for indexing documents into Vector Store.
--   **`chatbot.py`**: Core RAG logic (Retrieve -> Generate).
-
----
-
-## ⚠️ Important Disclaimer
-
-**This system is for Educational and Research Purposes ONLY.**
-
--   The content generated by this AI **DOES NOT constitute a valid Islamic Fatwa (Religious Ruling)**.
--   It is an AI tool and may occasionally generate incorrect or biased information.
--   Users are strictly advised to **consult qualified religious scholars** for specific rulings or matters of Halal/Haram.
--   The developers bear no responsibility for misuse or misinterpretation of the generated content.
-
----
-
-*Verified Sources Only. Knowledge with Responsibility.*
+This project utilizes the TTS library which is licensed under the MIT License/CPML. Output audio use may be subject to the Coqui Public Model License.
