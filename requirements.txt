@@ -8,7 +8,9 @@ altair
 tqdm
 langchain
 langchain-google-genai
-chromadb
+# chromadb 0.5.x is the last series that declares tokenizers<=0.20.3,
+# keeping it compatible with TTS 0.22.0's hard tokenizers upper-bound.
+chromadb>=0.5,<1.0
 langchain-community
 langchain-classic
 langchain-text-splitters
@@ -19,6 +21,10 @@ descope
 python-docx
 gTTS
 # --- Personalized Recitation module ---
+# TTS 0.22.0 requires numpy<2 and tokenizers<=0.20.3; pin both so pip
+# doesn't have to backtrack through hundreds of transitive versions.
+numpy>=1.26.4,<2.0
+tokenizers==0.20.3
 TTS>=0.22.0
 torch
 pydub
