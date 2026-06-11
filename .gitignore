@@ -32,3 +32,7 @@ dataset/
 *.log
 
 QURAN_ILM_REACT
+
+# Personalized Recitation module
+quran_reciter.db
+recordings/

@@ -1,20 +1,34 @@
 streamlit
 pymongo
 python-dotenv
-google-generativeai
+# Lower bounds prevent pip backtracking through 50+ versions of google packages
+google-generativeai>=0.8
 PyPDF2
 pandas
 altair
 tqdm
-langchain
-langchain-google-genai
+# Lower bounds lock the langchain family to the 1.x/4.x generation so the
+# resolver doesn't walk backwards through incompatible 0.x releases.
+langchain>=1.3
+langchain-google-genai>=4.0
 chromadb
-langchain-community
-langchain-classic
-langchain-text-splitters
+langchain-community>=0.4
+langchain-classic>=1.0
+langchain-text-splitters>=1.0
 pydantic
-langchain-chroma
+langchain-chroma>=1.0
 pypdf
 descope
 python-docx
 gTTS
+# --- Personalized Recitation module ---
+# TTS 0.22.0 requires numpy<2 and tokenizers<=0.20.3.
+# Pinning both cuts the resolver search space; chromadb 1.x only requires
+# tokenizers>=0.13.2 so tokenizers==0.20.3 satisfies it without any upper cap.
+numpy>=1.26.4,<2.0
+tokenizers==0.20.3
+TTS>=0.22.0
+torch
+pydub
+soundfile
+Pillow
