@@ -1,10 +1,11 @@
-﻿"""
+"""
 Voice Cloning module for Quran Reciter application.
 Uses XTTS v2 for Arabic text-to-speech with voice cloning.
 """
 
 import os
 import torch
+import torchaudio
 import soundfile as sf
 from pathlib import Path
 from pydub import AudioSegment
@@ -12,6 +13,30 @@ from tqdm import tqdm
 import warnings
 
 warnings.filterwarnings("ignore")
+
+# Torchaudio 2.11+ removed soundfile backend support and hardcoded torchcodec,
+# which breaks Coqui TTS on Windows without FFmpeg. We completely bypass it here:
+def _custom_torchaudio_load(filepath, *args, **kwargs):
+    audio_data, sample_rate = sf.read(filepath, dtype='float32')
+    if audio_data.ndim == 1:
+        audio_data = audio_data.reshape(-1, 1)
+    tensor = torch.from_numpy(audio_data).transpose(0, 1)
+    return tensor, sample_rate
+
+class _AudioMetaData:
+    def __init__(self, filepath):
+        info = sf.info(filepath)
+        self.sample_rate = info.samplerate
+        self.num_frames = info.frames
+        self.num_channels = info.channels
+        self.bits_per_sample = 16
+        self.encoding = info.subtype
+
+def _custom_torchaudio_info(filepath, *args, **kwargs):
+    return _AudioMetaData(filepath)
+
+torchaudio.load = _custom_torchaudio_load
+torchaudio.info = _custom_torchaudio_info
 
 # Set device
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -101,8 +126,16 @@ class QuranVoiceCloner:
         
         try:
             from TTS.api import TTS
+            
+            # XTTS v2 checkpoints contain custom classes that require weights_only=False
+            _original_torch_load = torch.load
+            torch.load = lambda *args, **kwargs: _original_torch_load(*args, **{**kwargs, 'weights_only': False})
+            
             print("Loading XTTS v2 model (this may take a moment on first run)...")
             self.tts = TTS(self.model_name, gpu=(device == "cuda"))
+            
+            # Restore original torch.load
+            torch.load = _original_torch_load
             self.model_loaded = True
             print("XTTS v2 model loaded successfully.")
             return True
