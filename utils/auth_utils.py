@@ -18,7 +18,7 @@ from . import config
 
 # Connect to DB
 client, db, fs = init_connection()
-users_collection = db["users"]
+users_collection = db["users"] if db is not None else None
 
 # --- Security Helpers ---
 

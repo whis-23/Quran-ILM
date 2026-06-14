@@ -81,8 +81,34 @@ class MockCollection:
             if "$" in k: # Skip complex MongoDB queries for the stub, or implement subset
                 continue
                 
-            # Handle nested objects loosely if needed, for now exact match:
             doc_val = doc.get(k)
+            if isinstance(v, dict):
+                matched = True
+                for op, op_val in v.items():
+                    if op == "$gte":
+                        val_to_compare = doc_val
+                        if isinstance(doc_val, str) and "T" in doc_val:
+                            try:
+                                val_to_compare = datetime.fromisoformat(doc_val)
+                            except ValueError:
+                                pass
+                        
+                        op_val_compare = op_val
+                        if isinstance(op_val, str) and "T" in op_val:
+                            try:
+                                op_val_compare = datetime.fromisoformat(op_val)
+                            except ValueError:
+                                pass
+                        
+                        try:
+                            if not (val_to_compare >= op_val_compare):
+                                matched = False
+                        except Exception:
+                            matched = False
+                if not matched:
+                    return False
+                continue
+
             # For JSON serialization reasons, compare strings if not exact type
             if str(doc_val) != str(v) and doc_val != v:
                 return False
@@ -101,9 +127,14 @@ class MockCollection:
         # simplified projection
         if projection:
             simplified = []
+            exclude_id = projection.get("_id") == 0
             for r in results:
                 proj_doc = {}
+                if not exclude_id and "_id" in r:
+                    proj_doc["_id"] = r["_id"]
                 for pk, pv in projection.items():
+                    if pk == "_id":
+                        continue
                     if pv and pk in r:
                         proj_doc[pk] = r[pk]
                 simplified.append(proj_doc)
@@ -216,6 +247,23 @@ class MockCollection:
     def create_index(self, *args, **kwargs):
         pass
 
+    def insert_many(self, documents):
+        for doc in documents:
+            self.insert_one(doc)
+        return type('InsertManyResult', (), {'inserted_ids': [d.get("_id") for d in documents]})()
+
+    def aggregate(self, pipeline):
+        data = self._get_data()
+        for step in pipeline:
+            if "$group" in step:
+                group_val = step["$group"]
+                if "avgRating" in group_val and "$avg" in group_val["avgRating"]:
+                    field = group_val["avgRating"]["$avg"].lstrip("$")
+                    ratings = [d.get(field) for d in data if d.get(field) is not None]
+                    avg = sum(ratings) / len(ratings) if ratings else 0
+                    return [{"avgRating": avg}]
+        return []
+
 class MockDatabase:
     def __init__(self, name):
         self.name = name
@@ -232,6 +280,28 @@ class MockDatabase:
         if name not in db:
             db[name] = []
             save_db(db)
+
+    def command(self, cmd, *args, **kwargs):
+        if cmd == "dbStats":
+            return {
+                "dataSize": 1024 * 1024,
+                "storageSize": 2 * 1024 * 1024,
+                "objects": 100,
+                "avgObjSize": 1024
+            }
+        elif cmd == "collStats":
+            # first argument or kwargs
+            coll_name = args[0] if args else kwargs.get("collection")
+            if not coll_name:
+                coll_name = "chats"
+            coll = self[coll_name]
+            count = coll.count_documents({})
+            return {
+                "count": count,
+                "size": count * 1024,
+                "avgObjSize": 1024
+            }
+        return {}
 
 class MockMongoClient:
     def __init__(self, *args, **kwargs):

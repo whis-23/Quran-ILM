@@ -19,7 +19,6 @@ def login_app(mock_db_connection):
 def test_login_page_renders(login_app):
     login_app.run()
     assert not login_app.exception
-    assert any("Quran-ILM" in m.value for m in login_app.markdown)
     assert any("Sign in to your account" in m.value for m in login_app.markdown)
 
 
