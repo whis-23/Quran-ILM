@@ -2,8 +2,8 @@
 
 This report documents the E2E and integration testing suite for the **Quran ILM** Streamlit application. The suite covers all core modules, views, database operations, mock RAG pipelines, and voice cloning capabilities.
 
-- **Total Test Cases**: 99
-- **Passed**: 98
+- **Total Test Cases**: 104
+- **Passed**: 103
 - **Failed**: 0
 - **Skipped**: 1
 - **Overall Status**: **PASS**
@@ -140,5 +140,20 @@ This suite verifies calculations of API costs, token consumption metrics, databa
 
 ---
 
+## 7. Semantic Evaluations - LLM as a Judge (TC-7.x)
+This suite conducts semantic and guardrail safety evaluations of chatbot outputs utilizing the Gemini API as an automated evaluator (using mock responses in local execution when the API key is not present).
+
+| TC ID | Test Case Name | Related FR | Preconditions | Test Steps | Test Data | Expected Result | Actual Result | Status |
+|---|---|---|---|---|---|---|---|---|
+| **TC-7.1** | Faithfulness / Grounding Judge | FR-2.1 | Context, query, and candidate responses | 1. Evaluate faithful vs hallucinated responses using RAG context. | Zakat context (2.5% rate), faithful (2.5%) vs unfaithful (10%) | Faithful receives score >= 4, unfaithful receives score <= 2. | Correctly graded grounding. | **PASS** |
+| **TC-7.2** | Topic Guardrails Judge | FR-2.1 | Candidate responses and off-topic query | 1. Evaluate response to off-topic programming questions. | Query: python sort script, correct decline vs incorrect answer | Correct decline receives score >= 4, incorrect receives score <= 2. | Correctly graded guardrails. | **PASS** |
+| **TC-7.3** | Semantic Relevance Judge | FR-2.1 | Candidate responses and query | 1. Evaluate relevant vs irrelevant answers. | Query: Sabr importance, relevant response vs irrelevant peace response | Relevant receives score >= 4, irrelevant receives score <= 2. | Correctly graded relevance. | **PASS** |
+| **TC-7.4** | Tone & Empathy Judge | FR-2.1 | Context, query, and candidate responses | 1. Evaluate empathetic scholarly response vs dry scriptural citation. | Query: going through difficult time, empathetic response vs dry response | Empathetic receives score >= 4, dry receives score <= 3. | Correctly graded tone & empathy. | **PASS** |
+| **TC-7.5** | Pairwise Comparison Judge | FR-2.1 | Two candidate responses and query | 1. Evaluate which response is superior for a given query. | Query: Laylat al-Qadr, detailed Response A vs empty Response B | Evaluates and selects Response A as the winner. | Correctly identified Response A as winner. | **PASS** |
+
+---
+
 ## Summary of Test Results
-All 94 end-to-end integration, validation, and failure-handling test cases have run using **pytest** (with 93 passing and 1 skipped due to AppTest environment limitations on serializing complex MagicMock instances across threads). Mocks were successfully created for deep learning engines (TTS, voice cloning) and databases to support fully localized execution on the developer machine's configuration.
+All 104 end-to-end integration, validation, semantic evaluation, and failure-handling test cases have run using **pytest** (with 103 passing and 1 skipped due to AppTest environment limitations on serializing complex MagicMock instances across threads). Mocks were successfully created for deep learning engines (TTS, voice cloning) and databases to support fully localized execution on the developer machine's configuration.
+
+
