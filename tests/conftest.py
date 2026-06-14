@@ -7,6 +7,13 @@ from .mock_mongo import MockMongoClient, MockGridFS, save_db
 # Make sure the root is in sys.path so utils imports work
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+# Set mock environment variables for testing
+os.environ["GOOGLE_API_KEY"] = "mock-google-key"
+os.environ["MONGO_URI"] = "mongodb://localhost"
+os.environ["MONGO_DB_NAME"] = "mock_db"
+os.environ["MONGO_RAG_URI"] = "mongodb://localhost"
+os.environ["MONGO_RAG_DB_NAME"] = "mock_rag_db"
+
 @pytest.fixture(autouse=True)
 def mock_db_connection():
     """

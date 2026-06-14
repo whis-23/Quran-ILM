@@ -57,7 +57,8 @@ def test_init_connection_exception():
 
 def test_delete_files_rag_db_exception(mock_db_connection):
     mock_fs = MockGridFS()
-    with patch("pymongo.MongoClient", side_effect=Exception("RAG DB boom")):
+    with patch("utils.config.MONGO_RAG_URI", "mongodb://localhost"), \
+         patch("pymongo.MongoClient", side_effect=Exception("RAG DB boom")):
         deleted_count, errors = admin_utils.delete_files(["ghost.pdf"], mock_db_connection, mock_fs)
         assert len(errors) == 1
         assert "Could not connect to RAG DB" in errors[0]
